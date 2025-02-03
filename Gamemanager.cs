@@ -445,6 +445,7 @@
                 player.Gold += (int)Math.Round((float)(shop.Equipment_List[inputKey.cursor].Price) * 0.85f);
                 Inventory.Remove(shop.Equipment_List[inputKey.cursor]);
                 shop.Equipment_List[inputKey.cursor].IsEquipped = false;
+                shop.Equipment_List[inputKey.cursor].DisarmEffect(player);
                 Console.WriteLine($"{shop.Equipment_List[inputKey.cursor].Name}을 판매했습니다.");
                 Thread.Sleep(500);
             }
