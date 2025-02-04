@@ -223,6 +223,7 @@
                     {
                         //마을로 진입
                         GameLoad();
+                        player.Reset();
                         Thread.Sleep(3000);
                         currentPage = Page.Town;
                     }
@@ -231,14 +232,16 @@
 
                 case 2:
                     //게임 저장하기
-                    if(player == null)
+                    if(player == null || EmptyPlayerCheck())
                     {
                         Console.WriteLine("저장할 내용이 없습니다. 새로운 캐릭터를 생성합니다.");
                         Thread.Sleep(2000);
                         CreatNewPlayer();
                     }
                     else
-                      GameSave();
+                    {
+                        GameSave();
+                    }
 
                     break;
                 case 3:
@@ -316,22 +319,19 @@
             switch (inputKey.cursor)
             {
                 case 0:
-                    Console.WriteLine("-[1] 던전\n[2] 상점\n[3]여관\n[4]던전\n[5]돌아가기");
+                    Console.WriteLine("-[1] 던전\n[2] 상점\n[3]여관\n[4]돌아가기");
                     break;
                 case 1:
-                    Console.WriteLine("[1] 던전\n-[2] 상점\n[3]여관\n[4]던전\n[5]돌아가기");
+                    Console.WriteLine("[1] 던전\n-[2] 상점\n[3]여관\n[4]돌아가기");
                     break;
                 case 2:
-                    Console.WriteLine("[1] 던전\n[2] 상점\n-[3]여관\n[4]던전\n[5]돌아가기");
+                    Console.WriteLine("[1] 던전\n[2] 상점\n-[3]여관\n[4]돌아가기");
                     break;
                 case 3:
-                    Console.WriteLine("[1] 던전\n[2] 상점\n[3]여관\n-[4]던전\n[5]돌아가기");
-                    break;
-                case 4:
-                    Console.WriteLine("[1] 던전\n[2] 상점\n[3]여관\n[4]던전\n-[5]돌아가기");
+                    Console.WriteLine("[1] 던전\n[2] 상점\n[3]여관\n-[4]돌아가기");
                     break;
             }
-            inputKey.MoveCursor(4);
+            inputKey.MoveCursor(3);
         } while (!inputKey.IsSelect);
 
         if (inputKey.IsSelect)
@@ -361,12 +361,6 @@
                     break;
 
                 case 3:
-                    Console.WriteLine("던전으로 간다.");
-                    Thread.Sleep(500);
-                    currentPage = Page.Dungeon;
-                    break;
-
-                case 4:
                     //마을로 돌아간다
                     break;
 
@@ -626,9 +620,8 @@
         Console.WriteLine("여관에서 휴식한다.");
         if(player.Gold > 500)
         {
-            int value = 50;
-            player.Heal(value);
-
+            player.Heal(player.Max_Health / 2);
+            Thread.Sleep(1500);
             Console.WriteLine("여관에 -500G를 지불하였다.");
             player.Gold -= 500;
 
@@ -715,26 +708,27 @@
 
         }
 
-        
-
-        if(player.Total_Def <  limitDef)
+        if (limitDef > 0)
         {
-            int dungeon_clear_chance = random.Next(0,10);
-            if(dungeon_clear_chance < 4)
+            if (player.Total_Def < limitDef)
+            {
+                int dungeon_clear_chance = random.Next(0, 10);
+                if (dungeon_clear_chance < 4)
+                {
+                    Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
+                    Dungeon_Success(limitDef);
+                }
+                else
+                {
+                    Console.WriteLine($"{dungeon_Name}을 클리어 하지 못했습니다.");
+                    Dungeon_Fail();
+                }
+            }
+            else
             {
                 Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
                 Dungeon_Success(limitDef);
             }
-            else
-            {
-                Console.WriteLine($"{dungeon_Name}을 클리어 하지 못했습니다.");
-                Dungeon_Fail();
-            }
-        }
-        else
-        {
-            Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
-            Dungeon_Success(limitDef);
         }
     }
 
@@ -766,12 +760,15 @@
         Console.WriteLine($"{dungeon_reward}G를 획득했다.");
         player.Gold += dungeon_reward;
         Thread.Sleep(1000);
-        currentPage = Page.Town;
+
+        player.GetExp(player);
+
+        currentPage = Page.Dungeon;
     }
 
     void Dungeon_Fail()
     {
-        player.OnDamage(player.Total_Hp / 2);
+        player.OnDamage(player.Max_Health / 2);
         Thread.Sleep(1000);
         currentPage = Page.Town;
     }
@@ -957,8 +954,6 @@
         streamReader.Close();
 
         return isEmpty;
-
-        
     }
 }
 

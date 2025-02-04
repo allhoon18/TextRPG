@@ -86,6 +86,7 @@
     public void OnDamage(int value)
     {
         Total_Hp -= value;
+        Health = Total_Hp - Add_Hp;
         Console.WriteLine($"{value}만큼의 피해를 입었다.");
     }
 }
