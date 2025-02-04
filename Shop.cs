@@ -13,6 +13,8 @@ public class Shop
         OldSword oldSword = new OldSword(Equipment_List);
         BronzeAxe bronzeAxe = new BronzeAxe(Equipment_List);
         SpartaSpear spartaSpear = new SpartaSpear(Equipment_List);
+        GMSword gmSword = new GMSword(Equipment_List);
+        GMArmor gmArmor = new GMArmor(Equipment_List);
     }
 
     public Equipment FindItem(string name)

@@ -151,3 +151,40 @@ public class SpartaSpear : Equipment
     }
 
 }
+
+public class GMSword : Equipment
+{
+    public GMSword(List<Equipment> equipment_list) : base(Equipment.EquipmentType.Weapon)
+    {
+        SetInfo(6, "운영자의 검", 9999, 99999, equipment_list);
+        WriteDescription("정기점검, 임시점검, 긴급점검, 연장점검의 힘을 합친 명검.");
+    }
+
+    public override void EquipEffect(Player player)
+    {
+        player.AddAttack(Effect);
+    }
+    public override void DisarmEffect(Player player)
+    {
+        player.AddAttack(-Effect);
+    }
+}
+
+public class GMArmor : Equipment
+{
+    public GMArmor(List<Equipment> equipment_list) : base(Equipment.EquipmentType.Armor)
+    {
+        SetInfo(7, "운영자의 갑옷", 9999, 99999, equipment_list);
+        WriteDescription("확률을 조작해 피해를 입지 않는 갑옷.");
+    }
+
+    public override void EquipEffect(Player player)
+    {
+        player.AddAttack(Effect);
+    }
+    public override void DisarmEffect(Player player)
+    {
+        player.AddAttack(-Effect);
+    }
+
+}
