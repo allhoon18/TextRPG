@@ -24,6 +24,8 @@
 
     InputKey inputKey = new InputKey();
 
+    Random random = new Random();
+
     public void GameSystem()
     {
         while (true)
@@ -295,7 +297,7 @@
                     Console.WriteLine("[1] 던전\n[2] 상점\n[3]여관\n[4]던전\n-[5]돌아가기");
                     break;
             }
-            inputKey.MoveCursor(3);
+            inputKey.MoveCursor(4);
         } while (!inputKey.IsSelect);
 
         if (inputKey.IsSelect)
@@ -590,9 +592,6 @@
         Console.WriteLine("여관에서 휴식한다.");
         if(player.Gold > 500)
         {
-            //테스트를 위해 체력을 50만큼 감소 시킴
-            player.OnDamage(70);
-
             int value = 50;
             player.Heal(value);
 
@@ -614,6 +613,9 @@
     void Process_Dungeon()
     {
         inputKey.cursor = 0;
+
+        int limitDef = 0 ;
+        string dungeon_Name = "";
 
         do
         {
@@ -659,13 +661,17 @@
             switch (inputKey.cursor)
             {
                 case 0:
-
+                    limitDef = 5;
+                    dungeon_Name = "쉬운 던전";
                     break;
                 case 1:
-
+                    limitDef = 11;
+                    dungeon_Name = "일반 던전";
                     break;
 
                 case 2:
+                    limitDef = 17;
+                    dungeon_Name = "어려운 던전";
                     break;
 
                 case 3:
@@ -674,6 +680,66 @@
             }
 
         }
+
+        
+
+        if(player.Total_Def <  limitDef)
+        {
+            int dungeon_clear_chance = random.Next(0,10);
+            if(dungeon_clear_chance < 4)
+            {
+                Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
+                Dungeon_Success(limitDef);
+            }
+            else
+            {
+                Console.WriteLine($"{dungeon_Name}을 클리어 하지 못했습니다.");
+                Dungeon_Fail();
+            }
+        }
+        else
+        {
+            Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
+            Dungeon_Success(limitDef);
+        }
+    }
+
+    void Dungeon_Success(int limitDef)
+    {
+        int damage = random.Next(25, 36);
+        damage -= limitDef - player.Total_Def;
+
+        int dungeon_reward = 0;
+        int dungeon_bonus = random.Next(player.Total_Atk, player.Total_Atk * 2 + 1);
+        float dungeon_bonus_rate = dungeon_bonus * 0.01f;
+
+        switch (limitDef)
+        {
+            case 5:
+                dungeon_reward = 1000;
+                break;
+
+            case 11:
+                dungeon_reward = 1700;
+                break;
+
+            case 17:
+                dungeon_reward = 2500;
+                break;
+        }
+
+        dungeon_reward = (int)(dungeon_reward * (1 + dungeon_bonus_rate));
+        Console.WriteLine($"{dungeon_reward}G를 획득했다.");
+        player.Gold += dungeon_reward;
+        Thread.Sleep(1000);
+        currentPage = Page.Town;
+    }
+
+    void Dungeon_Fail()
+    {
+        player.OnDamage(player.Total_Hp / 2);
+        Thread.Sleep(1000);
+        currentPage = Page.Town;
     }
 }
 
