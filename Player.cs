@@ -7,7 +7,7 @@
         Archer = 2
     }
 
-    public string? Name { get; private set; }
+    public string? Name { get; set; }
     public int Gold { get; set; } = 10000;
 
     public PlayerType playerType { get; protected set; }

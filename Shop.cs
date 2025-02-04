@@ -15,4 +15,16 @@ public class Shop
         SpartaSpear spartaSpear = new SpartaSpear(Equipment_List);
     }
 
+    public Equipment FindItem(string name)
+    {
+        Equipment equipment = null;
+        foreach(Equipment item in Equipment_List)
+        {
+            if(item.Name == name)
+                equipment = item;
+        }
+
+        return equipment;
+    }
+
 }

@@ -105,115 +105,149 @@
         
     }
 
+    void CreatNewPlayer()
+    {
+        Console.Clear();
+        //이름을 입력
+        Console.Write("이름을 입력하세요 : ");
+        name = Console.ReadLine();
+
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("원하는 직업을 선택하세요.");
+
+            switch (inputKey.cursor)
+            {
+                //선택 중인 선택지를 "-"를 이용해 표시
+                case 0:
+                    Console.WriteLine("-[1] 기사\n[2] 궁수\n[3]시작화면으로 돌아가기");
+                    break;
+                case 1:
+                    Console.WriteLine("[1] 기사\n-[2] 궁수\n[3]시작화면으로 돌아가기");
+                    break;
+                case 2:
+                    Console.WriteLine("[1] 기사\n[2] 궁수\n-[3]시작화면으로 돌아가기");
+                    break;
+            }
+
+            inputKey.MoveCursor(2);
+
+        } while (!inputKey.IsSelect);
+
+        //선택지에 따른 기능 실행
+        if (inputKey.IsSelect)
+        {
+            switch (inputKey.cursor)
+            {
+                case 0:
+                    //플레이어 직업을 Knight로 선택하여 생성
+                    Console.WriteLine("기사를 선택했습니다.");
+                    player = new Knight();
+                    player.SetName(name);
+                    currentPage = Page.Town;
+                    player.Reset();
+                    break;
+
+                case 1:
+                    //플레이어 직업을 Archer로 선택하여 생성
+                    Console.WriteLine("궁수를 선택했습니다.");
+                    player = new Archer();
+                    player.SetName(name);
+                    currentPage = Page.Town;
+                    player.Reset();
+                    break;
+
+                case 2:
+                    //시작화면으로 돌아가기
+                    currentPage = Page.Start;
+                    inputKey.cursor = 0;
+                    break;
+            }
+
+            inputKey.IsSelect = false;
+        }
+    }
+
     void Process_Lobby()
     {
         inputKey.cursor = 0;
         //로비에 진입
-        Console.Clear();
-        Console.WriteLine("로비에 진입했습니다.");
+        
 
-        //아직 플레이어를 생성한 적이 없을 경우
-        if (player == null)
+        do
         {
-            //이름을 입력
-            Console.Write("이름을 입력하세요 : ");
-            name = Console.ReadLine();
-            
-            do
+            Console.Clear();
+            Console.WriteLine("<Lobby>");
+            Console.WriteLine("로비에 진입했습니다.");
+
+            //이름과 직업 선택 없이 게임을 이어할지, 시작화면으로 돌아갈지 선택
+            switch (inputKey.cursor)
             {
-                Console.Clear();
-                Console.WriteLine("원하는 직업을 선택하세요.");
-
-                switch (inputKey.cursor)
-                {
-                    //선택 중인 선택지를 "-"를 이용해 표시
-                    case 0:
-                        Console.WriteLine("-[1] 기사\n[2] 궁수\n[3]시작화면으로 돌아가기");
-                        break;
-                    case 1:
-                        Console.WriteLine("[1] 기사\n-[2] 궁수\n[3]시작화면으로 돌아가기");
-                        break;
-                    case 2:
-                        Console.WriteLine("[1] 기사\n[2] 궁수\n-[3]시작화면으로 돌아가기");
-                        break;
-                }
-
-                inputKey.MoveCursor(2);
-
-            }while(!inputKey.IsSelect);
-
-            //선택지에 따른 기능 실행
-            if (inputKey.IsSelect)
-            {
-                switch (inputKey.cursor)
-                {
-                    case 0:
-                        //플레이어 직업을 Knight로 선택하여 생성
-                        Console.WriteLine("기사를 선택했습니다.");
-                        player = new Knight();
-                        player.SetName(name);
-                        currentPage = Page.Town;
-                        break;
-
-                    case 1:
-                        //플레이어 직업을 Archer로 선택하여 생성
-                        Console.WriteLine("궁수를 선택했습니다.");
-                        player = new Archer();
-                        player.SetName(name);
-                        currentPage = Page.Town;
-                        break;
-
-                    case 2:
-                        //시작화면으로 돌아가기
-                        currentPage = Page.Start;
-                        break;
-                }
-                player.Reset();
-                inputKey.IsSelect = false;
+                case 0:
+                    Console.WriteLine("-[1] 새로 시작하기\n[2] 이어하기\n[3] 저장하기\n[4]시작화면으로 돌아가기");
+                    break;
+                case 1:
+                    Console.WriteLine("[1] 새로 시작하기\n-[2] 이어하기\n[3] 저장하기\n[4]시작화면으로 돌아가기");
+                    break;
+                case 2:
+                    Console.WriteLine("[1] 새로 시작하기\n[2] 이어하기\n-[3] 저장하기\n[4]시작화면으로 돌아가기");
+                    break;
+                case 3:
+                    Console.WriteLine("[1] 새로 시작하기\n[2] 이어하기\n[3] 저장하기\n-[4]시작화면으로 돌아가기");
+                    break;
             }
-        }
-        //이미 생성된 플레이어가 있을 경우
-        else
+
+            inputKey.MoveCursor(3);
+        } while (!inputKey.IsSelect);
+
+
+        if (inputKey.IsSelect)
         {
-            do
-            {
-                Console.Clear ();
-                Console.WriteLine($"{player.Name}님 어서오세요.");
-                //이름과 직업 선택 없이 게임을 이어할지, 시작화면으로 돌아갈지 선택
-                switch (inputKey.cursor)
-                {
-                    case 0:
-                        Console.WriteLine("-[1] 이어하기\n[2]시작화면으로 돌아가기");
-                        break;
-                    case 1:
-                        Console.WriteLine("[1] 이어하기\n-[2]시작화면으로 돌아가기");
-                        break;
-                }
+            inputKey.IsSelect = false;
 
-                inputKey.MoveCursor(1);
-            } while(!inputKey.IsSelect);
-
-            
-            if (inputKey.IsSelect)
+            switch (inputKey.cursor)
             {
-                switch (inputKey.cursor)
-                {
-                    case 0:
+                case 0:
+                    CreatNewPlayer();
+                    break;
+
+                case 1:
+                    if(EmptyPlayerCheck())
+                    {
+                        Console.WriteLine("이전 플레이가 없습니다. 새로운 캐릭터를 생성합니다.");
+                        Thread.Sleep(2000);
+                        CreatNewPlayer();
+                    }
+                    else
+                    {
                         //마을로 진입
+                        GameLoad();
+                        Thread.Sleep(3000);
                         currentPage = Page.Town;
-                        break;
+                    }
+                    
+                    break;
 
-                    case 1:
-                        //시작화면으로 진입
-                        currentPage = Page.Start;
-                        break;
-                }
+                case 2:
+                    //게임 저장하기
+                    if(player == null)
+                    {
+                        Console.WriteLine("저장할 내용이 없습니다. 새로운 캐릭터를 생성합니다.");
+                        Thread.Sleep(2000);
+                        CreatNewPlayer();
+                    }
+                    else
+                      GameSave();
 
-                inputKey.IsSelect = false;
+                    break;
+                case 3:
+                    //시작화면으로 진입
+                    inputKey.cursor = 0;
+                    currentPage = Page.Start;
+                    break;
             }
- 
         }
-
     }
 
     void Process_Town()
@@ -740,6 +774,191 @@
         player.OnDamage(player.Total_Hp / 2);
         Thread.Sleep(1000);
         currentPage = Page.Town;
+    }
+
+    void GameSave()
+    {
+        StreamWriter streamWriter = new StreamWriter("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
+        //플레이어 정보 저장
+        streamWriter.WriteLine(player.playerType);
+        streamWriter.WriteLine(player.Name);
+        streamWriter.WriteLine(player.Level);
+        streamWriter.WriteLine(player.Health);
+        streamWriter.WriteLine(player.Attack);
+        streamWriter.WriteLine(player.Defence);
+        streamWriter.WriteLine(player.Gold);
+
+        streamWriter.WriteLine(Inventory.Count);
+
+        //인벤토리 정보 저장
+        foreach (Equipment item in Inventory)
+        {
+            streamWriter.WriteLine(item.Name);
+            streamWriter.WriteLine(item.IsEquipped);
+        }
+
+        streamWriter.Close();
+        Console.WriteLine("게임이 저장되었습니다.");
+        inputKey.cursor = 0;
+        Thread.Sleep(1000);
+    }
+
+    void GameLoad()
+    {
+        Console.WriteLine("게임 불러오기 시작");
+
+        //저장된 세이브 txt 파일을 불러옴
+        StreamReader streamReader = new StreamReader("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
+        //플레이어에 관한 정보를 불러온 것을 담는 배열
+        string[] playerData = new string[7];
+        Console.WriteLine("플레이어 데이터 초기화");
+
+        int inventoryCount = 0;
+        //인벤토리에 관한 정보를 불러온 것을 담는 배열
+        string[] inventoryData = Array.Empty<string>();
+        Console.WriteLine("인벤토리 데이터 초기화");
+
+        //몇번째 행까지 읽었는지를 저장
+        int count = 0;
+        //0번째 행의 정보를 불러옴
+        string line = streamReader.ReadLine();
+        while (line != null)
+        {
+            //playerData.Length-1까지는 Player에 관한 정보를 저장하고 있으므로 이를 불러옴
+            if (count < playerData.Length)
+            {
+                //읽은 정보를 플레이어 데이터로 저장
+                playerData[count] = line;
+
+                //확인한 행 번호를 업데이트
+                count++;
+
+                //다음 행을 불러옴
+                line = streamReader.ReadLine();
+            }
+            //playerData.Length의 번호에 인벤토리의 크기를 저장해 두었으므로 이를 불러옴
+            else if (count == playerData.Length)
+            {
+                Console.WriteLine("플레이어 데이터 불러오기 완료");
+
+                //7부터는 인벤토리에 관한 정보, 인벤토리의 크기를 확인
+                inventoryCount = int.Parse(line);
+                inventoryData = new string[inventoryCount * 2];
+
+                //확인한 행 번호를 업데이트
+                count++;
+
+                //다음 행을 불러옴(첫번째로 저장된 장비 이름에 관한 정보)
+                line = streamReader.ReadLine();
+                
+            }
+            //playerData.Length+1번부터 인벤토리 크기의 2배(이름과 장착 여부까지 2칸을 각 장비가 사용하므로)까지 저장해두었던 장비 목록을 불러옴
+            else if (count > playerData.Length && count < playerData.Length + inventoryCount * 2 && inventoryCount > 0)
+            {
+                //장비 이름 저장
+                inventoryData[count - (playerData.Length+1)] = line;
+
+                //확인한 행 번호를 업데이트
+                count++;
+
+                //다음 행을 불러옴(첫번째로 저장된 장비 이름에 관한 정보)
+                line = streamReader.ReadLine();
+
+                //장비의 장착 여부를 저장(홀수 번째 정보는 전부 Boolean 형태여야함)
+                inventoryData[count - (playerData.Length + 1)] = line;
+
+                //확인한 행 번호를 업데이트
+                count++;
+
+                //다음 행을 불러옴(두번째로 저장된 장비 이름에 관한 정보)
+                line = streamReader.ReadLine();
+            }
+            
+        }
+        //close the file
+        streamReader.Close();
+        Console.WriteLine("인벤토리 데이터 불러오기 완료");
+
+        LoadPlayer(playerData,inventoryData);
+    }
+
+    void LoadPlayer(string[] playerData, string[] inventoryData)
+    {
+        if (playerData[0] == Player.PlayerType.Knight.ToString())
+        {
+            player = new Knight();
+            player.Name = playerData[1];
+            player.Level = int.Parse(playerData[2]);
+            player.Health = int.Parse(playerData[3]);
+            player.Attack = int.Parse(playerData[4]);
+            player.Defence = int.Parse(playerData[5]);
+            player.Gold = int.Parse(playerData[6]);
+        }
+        else if (playerData[0] == Player.PlayerType.Archer.ToString())
+        {
+            player = new Archer();
+            player.Name = playerData[1];
+            player.Level = int.Parse(playerData[2]);
+            player.Health = int.Parse(playerData[3]);
+            player.Attack = int.Parse(playerData[4]);
+            player.Defence = int.Parse(playerData[5]);
+            player.Gold = int.Parse(playerData[6]);
+        }
+
+        Console.WriteLine("플레이어 데이터 적용");
+
+        Inventory.Clear();
+
+        int itemCount = 0;
+        foreach(string itemData in inventoryData)
+        {
+            //짝수번째에는 아이템의 이름, 홀수번째에는 장착 여부가 저장되어 있음
+            //(0,1)에 같은 장비에 관한 정보가 저장되어 있고, (2,3)에 같은 구조가 반복...
+            //Inventory[0]을 구성하기 위해서는 0번째와 1번째에 있는 정보가 필요-> itemCount/2를 해줌
+            if (itemCount % 2 == 0)
+            {
+                //아이템의 이름으로 전체 장비 목록에서 아이템을 검색하여 추가
+                Inventory.Add(shop.FindItem(itemData));
+                shop.FindItem(itemData).isSold = true;
+            }
+            //홀수번째이므로 장착 여부를 판단
+            else
+            {
+                if(itemData == "True")
+                {
+                    Inventory[itemCount/2].IsEquipped = true;
+                    Inventory[itemCount/2].EquipEffect(player);
+                }
+                else
+                {
+                    Inventory[itemCount/2].IsEquipped = false;
+                }
+            }
+            
+            itemCount++;
+        }
+
+        Console.WriteLine("인벤토리 데이터 적용");
+    }
+
+    bool EmptyPlayerCheck()
+    {
+        //저장된 세이브 txt 파일을 불러옴
+        StreamReader streamReader = new StreamReader("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
+        string line = streamReader.ReadLine();
+
+        bool isEmpty;
+
+        if (line == null)
+            isEmpty = true;
+        else
+            isEmpty = false;
+
+        streamReader.Close();
+
+        return isEmpty;
+
+        
     }
 }
 

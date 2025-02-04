@@ -8,11 +8,11 @@
         Monster = 2
     }
 
-    public int Health { get; protected set; }
-    public int Attack { get; protected set; }
-    public int Defence { get; protected set; }
-    public int Level { get; protected set; }
-    public string TypeName{ get; protected set; }
+    public int Health { get; set; }
+    public int Attack { get; set; }
+    public int Defence { get; set; }
+    public int Level { get; set; }
+    public string TypeName{ get; set; }
     EntitiyType Type;
 
     public int Add_Hp;
@@ -37,6 +37,10 @@
         this.Level = level;
         this.TypeName = typeName;
         this.Max_Health = health;
+
+        Add_Hp = 0;
+        Add_Atk = 0;
+        Add_Def = 0;
     }
 
     public void AddAttack(int value)
