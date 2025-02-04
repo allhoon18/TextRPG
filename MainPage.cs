@@ -5,6 +5,7 @@ public class MainPage
 {
     static void Main()
     {
+        //Gamemanager 실행
         Gamemanager gamemanager = new Gamemanager();
         gamemanager.GameSystem();
     }

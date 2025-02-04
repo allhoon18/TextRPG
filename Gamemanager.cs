@@ -1,7 +1,10 @@
-﻿public class Gamemanager
-{
-    Player? player;
+﻿using System.Runtime.Intrinsics.Arm;
 
+public class Gamemanager
+{
+    //플레이어 저장
+    Player? player;
+    //페이지 목록
     enum Page
     {
         None = 0,
@@ -13,17 +16,15 @@
         Status = 6,
         Inn = 7,
     }
-
+    //현재 페이지 표시
     Page currentPage = Page.Start;
-
-    string name;
-
+    //상점 클래스
     Shop shop = new Shop();
-
+    //소지한 장비를 저장하는 리스트
     List<Equipment> Inventory = new List<Equipment>();
-
+    //키 입력을 처리하는 클래스
     InputKey inputKey = new InputKey();
-
+    //무작위 값 생성을 위한 클래스
     Random random = new Random();
 
     public void GameSystem()
@@ -38,7 +39,7 @@
 
     void PageManager()
     {
-        //현재 맵에 해당하는 기능을 사용
+        //현재 맵에 해당하는 매서드 사용
         switch (currentPage)
         {
             case Page.Start:
@@ -107,10 +108,12 @@
 
     void CreatNewPlayer()
     {
+        //새로운 플레이어를 생성
+
         Console.Clear();
         //이름을 입력
         Console.Write("이름을 입력하세요 : ");
-        name = Console.ReadLine();
+        string name = Console.ReadLine();
 
         do
         {
@@ -171,9 +174,9 @@
 
     void Process_Lobby()
     {
+        //커서 위치 초기화
         inputKey.cursor = 0;
         //로비에 진입
-        
 
         do
         {
@@ -181,7 +184,7 @@
             Console.WriteLine("<Lobby>");
             Console.WriteLine("로비에 진입했습니다.");
 
-            //이름과 직업 선택 없이 게임을 이어할지, 시작화면으로 돌아갈지 선택
+            //새로운 캐릭터 생성 또는 저장된 게임을 이어할지, 시작화면으로 돌아갈지 선택
             switch (inputKey.cursor)
             {
                 case 0:
@@ -209,22 +212,26 @@
             switch (inputKey.cursor)
             {
                 case 0:
+                    //새로운 플레이어를 생성
                     CreatNewPlayer();
                     break;
 
                 case 1:
+                    //저장된 플레이어를 불러옴
                     if(EmptyPlayerCheck())
                     {
+                        //세이브 파일이 비어있을 경우 새로운 캐릭터를 생성
                         Console.WriteLine("이전 플레이가 없습니다. 새로운 캐릭터를 생성합니다.");
                         Thread.Sleep(2000);
                         CreatNewPlayer();
                     }
                     else
                     {
-                        //마을로 진입
+                        //세이브 파일을 불러옴
                         GameLoad();
                         player.Reset();
-                        Thread.Sleep(3000);
+                        Thread.Sleep(1000);
+                        //마을로 진입
                         currentPage = Page.Town;
                     }
                     
@@ -232,21 +239,31 @@
 
                 case 2:
                     //게임 저장하기
-                    if(player == null || EmptyPlayerCheck())
+                    //플레이어가 비어있을 경우
+                    if(player == null)
                     {
-                        Console.WriteLine("저장할 내용이 없습니다. 새로운 캐릭터를 생성합니다.");
-                        Thread.Sleep(2000);
-                        CreatNewPlayer();
+                        //플레이어는 비어있으나 세이브가 있을 경우
+                        if (!EmptyPlayerCheck())
+                        {
+                            //저장된 플레이어를 불러옴
+                            GameLoad();
+                            //불러온 플레이어를 저장
+                            GameSave();
+                        }
+                        else
+                        {
+                            //플레이어가 없고, 저장된 내용도 없는 경우 새로운 플레이어를 생성
+                            Console.WriteLine("저장할 내용이 없습니다. 새로운 캐릭터를 생성합니다.");
+                            Thread.Sleep(1000);
+                            CreatNewPlayer();
+                        }  
                     }
-                    else
-                    {
-                        GameSave();
-                    }
-
                     break;
+
                 case 3:
-                    //시작화면으로 진입
+                    //커서 위치를 초기화
                     inputKey.cursor = 0;
+                    //시작화면으로 진입
                     currentPage = Page.Start;
                     break;
             }
@@ -262,19 +279,20 @@
         do
         {
             Console.Clear();
+            //직업과 이름을 표시
             Console.WriteLine($"[{player.TypeName} {player.Name}의 모험]");
             Console.WriteLine("마을에 진입했습니다.");
-
+            //마을에서 선택 가능한 선택지: 상태창, 이동, 로비
             switch (inputKey.cursor)
             {
                 case 0:
-                    Console.WriteLine("-[1] 상태창\n[2] 이동\n[3]로비로 돌아가기");
+                    Console.WriteLine("-[1] 상태창&인벤토리\n[2] 이동\n[3]로비로 돌아가기");
                     break;
                 case 1:
-                    Console.WriteLine("[1] 상태창\n-[2] 이동\n[3]로비로 돌아가기");
+                    Console.WriteLine("[1] 상태창&인벤토리\n-[2] 이동\n[3]로비로 돌아가기");
                     break;
                 case 2:
-                    Console.WriteLine("[1] 상태창\n[2] 이동\n-[3]로비로 돌아가기");
+                    Console.WriteLine("[1] 상태창&인벤토리\n[2] 이동\n-[3]로비로 돌아가기");
                     break;
             }
 
@@ -355,6 +373,7 @@
                     break;
 
                 case 2:
+                    //여관으로 이동
                     Console.WriteLine("여관으로 간다.");
                     Thread.Sleep(500);
                     currentPage = Page.Inn;
@@ -430,6 +449,7 @@
 
             Console.WriteLine("Enter를 눌러 선택 중인 아이템을 구매");
             Console.WriteLine("구매한 아이템을 다시 선택하면 85% 가격에 판매됩니다.");
+            //커서가 Equipment_List 범위 내에서만 움직일 수 있도록 함
             inputKey.MoveCursor(shop.Equipment_List.Count);
         }
         while (!inputKey.IsSelect) ;
@@ -471,11 +491,19 @@
             //이미 구매된 아이템을 다시 선택할 경우 판매됨
             else
             {
+                //선택된 아이템을 판매 상태를 false로 함
                 shop.Equipment_List[inputKey.cursor].isSold = false;
-                player.Gold += (int)Math.Round((float)(shop.Equipment_List[inputKey.cursor].Price) * 0.85f);
+                //가격의 85% 가격으로 판매됨
+                player.Gold += (int)(shop.Equipment_List[inputKey.cursor].Price * 0.85f);
+                //인벤토리에서 아이템을 제거
                 Inventory.Remove(shop.Equipment_List[inputKey.cursor]);
-                shop.Equipment_List[inputKey.cursor].IsEquipped = false;
-                shop.Equipment_List[inputKey.cursor].DisarmEffect(player);
+                //아이템이 장착 상태라면 장착 상태를 해제하고 장착시 효과를 제거
+                if(shop.Equipment_List[inputKey.cursor].IsEquipped)
+                {
+                    shop.Equipment_List[inputKey.cursor].IsEquipped = false;
+                    shop.Equipment_List[inputKey.cursor].DisarmEffect(player);
+                }
+                
                 Console.WriteLine($"{shop.Equipment_List[inputKey.cursor].Name}을 판매했습니다.");
                 Thread.Sleep(500);
             }
@@ -618,11 +646,13 @@
     {
         Console.Clear();
         Console.WriteLine("여관에서 휴식한다.");
+        //여관 사용에 요구되는 골드를 소지하고 있는지 확인
         if(player.Gold > 500)
         {
+            //최대 체력의 절반만큼 회복
             player.Heal(player.Max_Health / 2);
             Thread.Sleep(1500);
-            Console.WriteLine("여관에 -500G를 지불하였다.");
+            Console.WriteLine("여관에 500G를 지불하였다.");
             player.Gold -= 500;
 
             Thread.Sleep(1500);
@@ -630,6 +660,7 @@
         }
         else
         {
+            //골드가 충분하지 않을 경우
             Console.WriteLine("돈이 부족하여 휴식을 취할 수 없다.\n여관에서 휴식하려면 500G가 필요하다.");
             Thread.Sleep(1500);
             currentPage = Page.Town;
@@ -641,6 +672,7 @@
     {
         inputKey.cursor = 0;
 
+        //던전을 구분하는 변수인 limitDef(제한 방어력)와 던전 이름
         int limitDef = 0 ;
         string dungeon_Name = "";
 
@@ -685,6 +717,7 @@
         {
             inputKey.IsSelect = false;
 
+            //각 던전에 해당하는 정보를 저장
             switch (inputKey.cursor)
             {
                 case 0:
@@ -707,23 +740,29 @@
             }
 
         }
-
+        //마을을 선택했을 경우 limitDef가 0이므로 아래 과정을 거치지 않음
         if (limitDef > 0)
         {
+            //플레이어의 방어력이 제한 방어력 이상인지 이하인지 검사
             if (player.Total_Def < limitDef)
             {
+                //제한 방어력에 미치지 못할 경우
+                //0~9 사이의 숫자를 무작위로 생성
                 int dungeon_clear_chance = random.Next(0, 10);
+                //40% 확률로 던전을 클리어
                 if (dungeon_clear_chance < 4)
                 {
                     Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
                     Dungeon_Success(limitDef);
                 }
+                //60% 확률로 실패
                 else
                 {
                     Console.WriteLine($"{dungeon_Name}을 클리어 하지 못했습니다.");
                     Dungeon_Fail();
                 }
             }
+            //제한 방어력을 달성한 경우 100% 확률로 성공
             else
             {
                 Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
@@ -734,13 +773,19 @@
 
     void Dungeon_Success(int limitDef)
     {
+        //던전 클리어를 성공했을 경우
+        //25~35 사이의 무작위 값을 생성
         int damage = random.Next(25, 36);
+        //제한 방어력과의 초과분만큼 가해지는 데미지를 차감
         damage -= limitDef - player.Total_Def;
 
+        //보상은 공격력에 따라 증가
         int dungeon_reward = 0;
+        //공격력~공격력 * 2% 만큼 보상이 증가
         int dungeon_bonus = random.Next(player.Total_Atk, player.Total_Atk * 2 + 1);
+        //공격력~공격력 * 2에서 정해진 숫자만큼 증가율을 계산 
         float dungeon_bonus_rate = dungeon_bonus * 0.01f;
-
+        //제한 방어력에 따라 던전 레벨이 구분되므로 이에 따라 보상을 결정
         switch (limitDef)
         {
             case 5:
@@ -755,26 +800,26 @@
                 dungeon_reward = 2500;
                 break;
         }
-
+        //결정된 보상과 증가율에 따라 최종 보상을 결정
         dungeon_reward = (int)(dungeon_reward * (1 + dungeon_bonus_rate));
         Console.WriteLine($"{dungeon_reward}G를 획득했다.");
+        //플레이어에게 보상을 적용
         player.Gold += dungeon_reward;
         Thread.Sleep(1000);
-
+        //성공 시에 경험치 부여
         player.GetExp(player);
-
-        currentPage = Page.Dungeon;
     }
 
     void Dungeon_Fail()
     {
+        //실패했을 경우 최대 체력의 절반의 피해를 입음
         player.OnDamage(player.Max_Health / 2);
         Thread.Sleep(1000);
-        currentPage = Page.Town;
     }
 
     void GameSave()
     {
+        //게임 저장을 위해 save.txt 파일을 불러옴
         StreamWriter streamWriter = new StreamWriter("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
         //플레이어 정보 저장
         streamWriter.WriteLine(player.playerType);
@@ -784,16 +829,16 @@
         streamWriter.WriteLine(player.Attack);
         streamWriter.WriteLine(player.Defence);
         streamWriter.WriteLine(player.Gold);
-
+        //인벤토리의 크기를 저장
         streamWriter.WriteLine(Inventory.Count);
-
         //인벤토리 정보 저장
         foreach (Equipment item in Inventory)
         {
+            //인벤토리에 있는 아이템의 이름과 장착 여부를 저장
             streamWriter.WriteLine(item.Name);
             streamWriter.WriteLine(item.IsEquipped);
         }
-
+        //save.txt 작성을 종료
         streamWriter.Close();
         Console.WriteLine("게임이 저장되었습니다.");
         inputKey.cursor = 0;
@@ -872,15 +917,16 @@
             }
             
         }
-        //close the file
+        //save.txt 불러오기를 종료
         streamReader.Close();
         Console.WriteLine("인벤토리 데이터 불러오기 완료");
-
+        //받아온 플레이어 데이터와 인벤토리 데이터에 따라 플레이어와 인벤토리를 구성
         LoadPlayer(playerData,inventoryData);
     }
 
     void LoadPlayer(string[] playerData, string[] inventoryData)
     {
+        //save.txt 파일의 첫 행에 저장된 직업에 맞춰 플레이어를 새로 생성
         if (playerData[0] == Player.PlayerType.Knight.ToString())
         {
             player = new Knight();
@@ -904,8 +950,9 @@
 
         Console.WriteLine("플레이어 데이터 적용");
 
+        //현재 인벤토리를 초기화
         Inventory.Clear();
-
+        
         int itemCount = 0;
         foreach(string itemData in inventoryData)
         {
@@ -916,18 +963,23 @@
             {
                 //아이템의 이름으로 전체 장비 목록에서 아이템을 검색하여 추가
                 Inventory.Add(shop.FindItem(itemData));
+                //인벤토리에 있는 아이템이므로 판매 상태를 true로 함
                 shop.FindItem(itemData).isSold = true;
             }
             //홀수번째이므로 장착 여부를 판단
             else
             {
+                //해당 행에 저장된 값이 "True"일 경우
                 if(itemData == "True")
                 {
+                    //아이템을 장착 상태로 함
                     Inventory[itemCount/2].IsEquipped = true;
+                    //아이템 장착 효과를 적용
                     Inventory[itemCount/2].EquipEffect(player);
                 }
                 else
                 {
+                    //아이템을 장착 해제 상태로 함
                     Inventory[itemCount/2].IsEquipped = false;
                 }
             }
@@ -940,12 +992,13 @@
 
     bool EmptyPlayerCheck()
     {
+        //저장된 파일이 있는지 여부를 판단
         //저장된 세이브 txt 파일을 불러옴
         StreamReader streamReader = new StreamReader("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
         string line = streamReader.ReadLine();
 
         bool isEmpty;
-
+        //첫 행 내용이 비어있는지 여부로 save 상태를 확인
         if (line == null)
             isEmpty = true;
         else

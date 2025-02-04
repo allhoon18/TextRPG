@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 abstract public class Equipment
 {
+    //장비 종류를 구분-같은 종류의 장비를 동시에 착용하지 않도록 하는데 사용
     public enum EquipmentType
     {
         None = 0,
@@ -11,7 +12,7 @@ abstract public class Equipment
     }
 
     public EquipmentType equipmentType;
-
+    //장비를 구성하는 변수
     public int Id { get; private set; }
     public string Name { get; private set; }
     public int Effect { get; private set; }
@@ -27,6 +28,7 @@ abstract public class Equipment
         
     }
 
+    //장비에서 갖고 있는 값을 설정
     public void SetInfo(int id, string name, int effect, int price, List<Equipment> equipment_list)
     {
         this.Id = id;
@@ -35,15 +37,17 @@ abstract public class Equipment
         this.Price = price;
         equipment_list.Insert(id, this);
     }
+    //장비 설명을 작성
     public void WriteDescription(string words)
     {
         Describe = words;
     }
 
+    //각각의 장비별로 장착, 해제 효과가 필요하므로 이는 각 장비 클래스에서 따로 완성
     public abstract void EquipEffect(Player player);
     public abstract void DisarmEffect(Player player);
 }
-
+//각각의 장비들을 따로 클래스로 생성
 public class TrainingArmor : Equipment
 {
     public TrainingArmor(List<Equipment> equipment_list) : base(Equipment.EquipmentType.Armor)
