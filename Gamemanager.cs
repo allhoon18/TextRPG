@@ -963,7 +963,7 @@ public class Gamemanager
     void GameSave()
     {
         //게임 저장을 위해 save.txt 파일을 불러옴
-        StreamWriter streamWriter = new StreamWriter("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
+        StreamWriter streamWriter = new StreamWriter(".\\data\\save.txt");
         //플레이어 정보 저장
         streamWriter.WriteLine(player.playerType);
         streamWriter.WriteLine(player.Name);
@@ -994,7 +994,7 @@ public class Gamemanager
         Console.WriteLine("게임 불러오기 시작");
 
         //저장된 세이브 txt 파일을 불러옴
-        StreamReader streamReader = new StreamReader("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
+        StreamReader streamReader = new StreamReader(".\\data\\save.txt");
         //플레이어에 관한 정보를 불러온 것을 담는 배열
         string[] playerData = new string[8];
         Console.WriteLine("플레이어 데이터 초기화");
@@ -1140,7 +1140,7 @@ public class Gamemanager
     {
         //저장된 파일이 있는지 여부를 판단
         //저장된 세이브 txt 파일을 불러옴
-        StreamReader streamReader = new StreamReader("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
+        StreamReader streamReader = new StreamReader(".\\data\\save.txt");
         string line = streamReader.ReadLine();
 
         bool isEmpty;
