@@ -25,6 +25,8 @@
     public int Total_Atk;
     public int Total_Def;
 
+    public bool IsDead = false;
+
     protected Entitiy(EntitiyType type)
     {
         this.Type = type;
@@ -65,7 +67,7 @@
         Total_Hp = Health + Add_Hp;
         Total_Def = Defence + Add_Def;
         Total_Atk = Attack + Add_Atk;
-        Max_Health = Total_Hp;
+        Max_Health = Max_Health + Add_Hp;
     }
 
     //체력 회복 기능
@@ -74,6 +76,9 @@
         //값이 음수일 경우 적용하지 않음
         if (value < 0)
             return;
+
+        //사망 상태를 false로 함
+        IsDead = false;
 
         //기존 체력을 저장
         int currrenHp = Total_Hp;
@@ -90,7 +95,7 @@
         Health = Total_Hp - Add_Hp;
 
         Console.WriteLine($"체력을 {Total_Hp - currrenHp}만큼 회복했다.");
-        Console.WriteLine($"{currrenHp}->{Total_Hp}");
+        Console.WriteLine($"HP : {currrenHp}->{Total_Hp}");
     }
 
     public void OnDamage(int value)
@@ -98,17 +103,23 @@
         //값이 음수일 경우 적용하지 않음
         if (value < 0)
             return;
+
+        //기존 체력을 저장
+        int currrenHp = Total_Hp;
+
         //입력된 데미지만큼 피해
         Total_Hp -= value;
 
         //체력 값이 음수가 되지 않도록 함
-        if (Total_Hp < 0)
+        if (Total_Hp <= 0)
         {
             Total_Hp = 0;
+            IsDead = true;
         }
         //Add_Hp를 제외한 Health 값을 저장
         Health = Total_Hp - Add_Hp;
         Console.WriteLine($"{value}만큼의 피해를 입었다.");
+        Console.WriteLine($"HP : {currrenHp}->{Total_Hp}");
     }
 }
 

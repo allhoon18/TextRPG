@@ -240,7 +240,12 @@ public class Gamemanager
                 case 2:
                     //게임 저장하기
                     //플레이어가 비어있을 경우
-                    if(player == null)
+                    if(player != null)
+                    {
+                        //현재 플레이를 저장
+                        GameSave();
+                    }
+                    else
                     {
                         //플레이어는 비어있으나 세이브가 있을 경우
                         if (!EmptyPlayerCheck())
@@ -256,7 +261,7 @@ public class Gamemanager
                             Console.WriteLine("저장할 내용이 없습니다. 새로운 캐릭터를 생성합니다.");
                             Thread.Sleep(1000);
                             CreatNewPlayer();
-                        }  
+                        }
                     }
                     break;
 
@@ -472,7 +477,7 @@ public class Gamemanager
                 if(player.Gold >= shop.Equipment_List[inputKey.cursor].Price)
                 {
                     //가격만큼 플레이어 골드에서 차감
-                    player.Gold -= shop.Equipment_List[inputKey.cursor].Price;
+                    player.ChangeGold(-shop.Equipment_List[inputKey.cursor].Price);
                     //아이템의 판매 상태를 참으로 함
                     shop.Equipment_List[inputKey.cursor].isSold = true;
                     //인벤토리에 아이템을 추가
@@ -494,7 +499,7 @@ public class Gamemanager
                 //선택된 아이템을 판매 상태를 false로 함
                 shop.Equipment_List[inputKey.cursor].isSold = false;
                 //가격의 85% 가격으로 판매됨
-                player.Gold += (int)(shop.Equipment_List[inputKey.cursor].Price * 0.85f);
+                player.ChangeGold((int)(shop.Equipment_List[inputKey.cursor].Price * 0.85f));
                 //인벤토리에서 아이템을 제거
                 Inventory.Remove(shop.Equipment_List[inputKey.cursor]);
                 //아이템이 장착 상태라면 장착 상태를 해제하고 장착시 효과를 제거
@@ -653,7 +658,7 @@ public class Gamemanager
             player.Heal(player.Max_Health / 2);
             Thread.Sleep(1500);
             Console.WriteLine("여관에 500G를 지불하였다.");
-            player.Gold -= 500;
+            player.ChangeGold(-500);
 
             Thread.Sleep(1500);
             currentPage = Page.Town;
@@ -684,27 +689,27 @@ public class Gamemanager
             switch (inputKey.cursor)
             {
                 case 0:
-                    Console.WriteLine("-[1] 쉬운 던전 | 방어력 5 이상 권장");
-                    Console.WriteLine("[2] 일반 던전 | 방어력 11 이상 권장");
-                    Console.WriteLine("[3] 어려운 던전 | 방어력 17 이상 권장");
+                    Console.WriteLine("-[1] 쉬운 던전 | 방어력 11 이상 권장");
+                    Console.WriteLine("[2] 일반 던전 | 방어력 16 이상 권장");
+                    Console.WriteLine("[3] 어려운 던전 | 방어력 21 이상 권장");
                     Console.WriteLine("[4] 마을로 돌아가기");
                     break;
                 case 1:
-                    Console.WriteLine("[1] 쉬운 던전 | 방어력 5 이상 권장");
-                    Console.WriteLine("-[2] 일반 던전 | 방어력 11 이상 권장");
-                    Console.WriteLine("[3] 어려운 던전 | 방어력 17 이상 권장");
+                    Console.WriteLine("[1] 쉬운 던전 | 방어력 11 이상 권장");
+                    Console.WriteLine("-[2] 일반 던전 | 방어력 16 이상 권장");
+                    Console.WriteLine("[3] 어려운 던전 | 방어력 21 이상 권장");
                     Console.WriteLine("[4] 마을로 돌아가기");
                     break;
                 case 2:
-                    Console.WriteLine("[1] 쉬운 던전 | 방어력 5 이상 권장");
-                    Console.WriteLine("[2] 일반 던전 | 방어력 11 이상 권장");
-                    Console.WriteLine("-[3] 어려운 던전 | 방어력 17 이상 권장");
+                    Console.WriteLine("[1] 쉬운 던전 | 방어력 11 이상 권장");
+                    Console.WriteLine("[2] 일반 던전 | 방어력 16 이상 권장");
+                    Console.WriteLine("-[3] 어려운 던전 | 방어력 21 이상 권장");
                     Console.WriteLine("[4] 마을로 돌아가기");
                     break;
                 case 3:
-                    Console.WriteLine("[1] 쉬운 던전 | 방어력 5 이상 권장");
-                    Console.WriteLine("[2] 일반 던전 | 방어력 11 이상 권장");
-                    Console.WriteLine("[3] 어려운 던전 | 방어력 17 이상 권장");
+                    Console.WriteLine("[1] 쉬운 던전 | 방어력 11 이상 권장");
+                    Console.WriteLine("[2] 일반 던전 | 방어력 16 이상 권장");
+                    Console.WriteLine("[3] 어려운 던전 | 방어력 21 이상 권장");
                     Console.WriteLine("-[4] 마을로 돌아가기");
                     break;
             }
@@ -721,16 +726,16 @@ public class Gamemanager
             switch (inputKey.cursor)
             {
                 case 0:
-                    limitDef = 5;
+                    limitDef = 11;
                     dungeon_Name = "쉬운 던전";
                     break;
                 case 1:
-                    limitDef = 11;
+                    limitDef = 16;
                     dungeon_Name = "일반 던전";
                     break;
 
                 case 2:
-                    limitDef = 17;
+                    limitDef = 21;
                     dungeon_Name = "어려운 던전";
                     break;
 
@@ -743,6 +748,13 @@ public class Gamemanager
         //마을을 선택했을 경우 limitDef가 0이므로 아래 과정을 거치지 않음
         if (limitDef > 0)
         {
+            if(player.IsDead)
+            {
+                Console.WriteLine($"{player.TypeName} {player.Name}는 싸울 수 없다.\n여관에서 회복하자.");
+                currentPage = Page.Inn;
+                return;
+            }
+
             //플레이어의 방어력이 제한 방어력 이상인지 이하인지 검사
             if (player.Total_Def < limitDef)
             {
@@ -755,11 +767,53 @@ public class Gamemanager
                     Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
                     Dungeon_Success(limitDef);
                 }
-                //60% 확률로 실패
+                //60% 확률로 실패->단순히 실패하는 것에서 몬스터와 전투하는 것으로 변경
                 else
                 {
-                    Console.WriteLine($"{dungeon_Name}을 클리어 하지 못했습니다.");
-                    Dungeon_Fail();
+                    //Console.WriteLine($"{dungeon_Name}을 클리어 하지 못했습니다.");
+                    //Dungeon_Fail();
+                    //난이도에 따른 전투 횟수를 지정
+                    int battle_times = 0;
+                    switch (limitDef)
+                    {
+                        case 11:
+                            battle_times = 1;
+                            break;
+
+                        case 16:
+                            battle_times = 3;
+                            break;
+
+                        case 21:
+                            battle_times = 5;
+                            break;
+                    }
+                    //전투 횟수를 측정
+                    int battleCount = 0;
+                    //전투 횟수를 충족할 때까지 또는 플레이어가 사망할 때까지 반복
+                    while(battleCount < battle_times && !player.IsDead)
+                    {
+                        Console.Clear();
+                        //현재 몇번째 전투인지 표시
+                        Console.WriteLine($"{battleCount+1}번째 전투");
+                        //던전 난이도에 따른 몬스터 생성
+                        Monster summon_monster = Summon_Monster(limitDef);
+                        //몬스터와 전투
+                        Battle(player, summon_monster);
+                        battleCount++;
+                    }
+                    //모든 전투를 죽지 않고 통과한 경우 클리어
+                    if(!player.IsDead)
+                    {
+                        Console.WriteLine($"{dungeon_Name}을 클리어 했습니다.");
+                        Dungeon_Success(limitDef);
+                    }
+                    //그렇지 못한 경우 클리어 하지 못함
+                    else
+                    {
+                        Console.WriteLine($"{dungeon_Name}을 클리어 하지 못했습니다.");
+                        Thread.Sleep(2000);
+                    }
                 }
             }
             //제한 방어력을 달성한 경우 100% 확률로 성공
@@ -788,15 +842,15 @@ public class Gamemanager
         //제한 방어력에 따라 던전 레벨이 구분되므로 이에 따라 보상을 결정
         switch (limitDef)
         {
-            case 5:
+            case 11:
                 dungeon_reward = 1000;
                 break;
 
-            case 11:
+            case 16:
                 dungeon_reward = 1700;
                 break;
 
-            case 17:
+            case 21:
                 dungeon_reward = 2500;
                 break;
         }
@@ -804,7 +858,7 @@ public class Gamemanager
         dungeon_reward = (int)(dungeon_reward * (1 + dungeon_bonus_rate));
         Console.WriteLine($"{dungeon_reward}G를 획득했다.");
         //플레이어에게 보상을 적용
-        player.Gold += dungeon_reward;
+        player.ChangeGold(dungeon_reward);
         Thread.Sleep(1000);
         //성공 시에 경험치 부여
         player.GetExp(player);
@@ -817,6 +871,95 @@ public class Gamemanager
         Thread.Sleep(1000);
     }
 
+    Monster Summon_Monster(int limitDef)
+    {
+        Monster monster = null;
+        //어떤 몬스터를 소환할 지 무작위로 결정
+        int spawn_rate = random.Next(0, 10);
+        int Slime_rate = 0;
+        int Goblin_rate = 0;
+
+        switch(limitDef)
+        {
+            case 5:
+                //spawn_rate 값이 7 미만일 때 슬라임을 소환
+                Slime_rate = 7;
+                //spawn_rate 값이 10(7+3) 미만일 때 고블린을 소환
+                Goblin_rate = 3;
+                break;
+
+            case 11:
+                //spawn_rate 값이 4 미만일 때 슬라임을 소환
+                Slime_rate = 4;
+                //spawn_rate 값이 9(4+5) 미만일 때 고블린을 소환
+                Goblin_rate = 5;
+                //그 외의 경우인 9일 때 오크를 소환
+                break;
+
+            case 17:
+                //spawn_rate 값이 2 미만일 때 슬라임을 소환
+                Slime_rate = 2;
+                //spawn_rate 값이 8(2+6) 미만일 때 고블린을 소환
+                Goblin_rate = 6;
+                //그 외의 경우인 8,9일 때 오크를 소환
+                break;
+        }
+
+        //스폰 확률에 따른 몬스터 생성
+        if(spawn_rate < Slime_rate)
+        {
+            monster = new Slime();
+        }
+        else if(spawn_rate < Slime_rate + Goblin_rate)
+        {
+            monster = new Goblin();
+        }
+        else
+        {
+            monster = new Orc();
+        }
+        //생성한 몬스터를 반환
+        return monster;
+    }
+
+    void Battle(Player player, Monster monster)
+    {
+        //몬스더와의 전투
+        Console.WriteLine($"{monster.TypeName}이 나타났다!");
+        //어느 한쪽이 죽을 때까지 반복
+        while(!player.IsDead && !monster.IsDead)
+        {
+            //플레이어의 공격
+            Console.WriteLine($"\n{player.TypeName} {player.Name}의 공격");
+            //공격력-방어력 수치만큼 데미지를 줌
+            monster.OnDamage(player.Total_Atk - monster.Total_Def);
+            Thread.Sleep(1000);
+            //몬스터 사망시
+            if(monster.IsDead)
+            {
+                Console.WriteLine($"\n{monster.TypeName}을 잡았다.");
+                Console.WriteLine($"{monster.gold_reward}G를 획득했다.");
+                player.ChangeGold(monster.gold_reward);
+                Thread.Sleep(1000);
+                break;
+            }
+
+            //몬스터의 공격
+            Console.WriteLine($"\n{monster.TypeName}의 공격");
+            player.OnDamage(monster.Total_Atk - player.Total_Def);
+            Thread.Sleep(1000);
+            //플레이어 사망시
+            if (player.IsDead)
+            {
+                Console.WriteLine($"{player.TypeName} {player.Name}이 쓰러졌다.");
+                Console.WriteLine($"{monster.gold_reward}G를 잃었다.");
+                player.ChangeGold(-monster.gold_reward);
+                Thread.Sleep(1000);
+                break;
+            }
+        }
+    }
+
     void GameSave()
     {
         //게임 저장을 위해 save.txt 파일을 불러옴
@@ -826,6 +969,7 @@ public class Gamemanager
         streamWriter.WriteLine(player.Name);
         streamWriter.WriteLine(player.Level);
         streamWriter.WriteLine(player.Health);
+        streamWriter.WriteLine(player.Max_Health);
         streamWriter.WriteLine(player.Attack);
         streamWriter.WriteLine(player.Defence);
         streamWriter.WriteLine(player.Gold);
@@ -852,7 +996,7 @@ public class Gamemanager
         //저장된 세이브 txt 파일을 불러옴
         StreamReader streamReader = new StreamReader("C:\\Users\\Allhoon\\source\\repos\\TextRPG\\TextRPG\\data\\save.txt");
         //플레이어에 관한 정보를 불러온 것을 담는 배열
-        string[] playerData = new string[7];
+        string[] playerData = new string[8];
         Console.WriteLine("플레이어 데이터 초기화");
 
         int inventoryCount = 0;
@@ -933,9 +1077,10 @@ public class Gamemanager
             player.Name = playerData[1];
             player.Level = int.Parse(playerData[2]);
             player.Health = int.Parse(playerData[3]);
-            player.Attack = int.Parse(playerData[4]);
-            player.Defence = int.Parse(playerData[5]);
-            player.Gold = int.Parse(playerData[6]);
+            player.Max_Health = int.Parse(playerData[4]);
+            player.Attack = int.Parse(playerData[5]);
+            player.Defence = int.Parse(playerData[6]);
+            player.Gold = int.Parse(playerData[7]);
         }
         else if (playerData[0] == Player.PlayerType.Archer.ToString())
         {
@@ -943,9 +1088,10 @@ public class Gamemanager
             player.Name = playerData[1];
             player.Level = int.Parse(playerData[2]);
             player.Health = int.Parse(playerData[3]);
-            player.Attack = int.Parse(playerData[4]);
-            player.Defence = int.Parse(playerData[5]);
-            player.Gold = int.Parse(playerData[6]);
+            player.Max_Health = int.Parse(playerData[4]);
+            player.Attack = int.Parse(playerData[5]);
+            player.Defence = int.Parse(playerData[6]);
+            player.Gold = int.Parse(playerData[7]);
         }
 
         Console.WriteLine("플레이어 데이터 적용");

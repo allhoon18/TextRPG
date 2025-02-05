@@ -28,6 +28,20 @@
     {
         Name = name;
     }
+    //골드의 추가 및 차감을 관리(음수가 되지 않도록 함)
+    public void ChangeGold(int value)
+    {
+        int currentGold = Gold;
+
+        Gold += value;
+
+        if(Gold < 0)
+        {
+            Gold = 0;
+        }
+        Console.WriteLine($"Gold : {currentGold}->{Gold}");
+    }
+
     //경험치 획득
     public void GetExp(Player player)
     {
@@ -51,19 +65,25 @@
     {
         //레벨업 이전의 값을 저장
         int prior_level = player.Level;
+        int prior_Health = player.Max_Health;
         int prior_attack = player.Attack;
         int prior_defence = player.Defence;
         //레벨업을 통한 상승치를 적용
         player.Level++;
         player.Attack ++;
         player.Defence ++;
+        player.Max_Health += 10;
 
         Console.WriteLine($"레벨 업!(Lv.{prior_level}->Lv.{player.Level})");
+        Thread.Sleep(1000);
+        Console.WriteLine($"최대체력 : {prior_Health}->{player.Max_Health}");
         Thread.Sleep(1000);
         Console.WriteLine($"공격력 : {prior_attack}->{player.Attack}");
         Thread.Sleep(1000);
         Console.WriteLine($"방어력 : {prior_defence}->{player.Defence}");
         Thread.Sleep(1000);
+        
+        player.Reset();
     }
 }
 //각 클래스로 플레이어 직업을 저장
