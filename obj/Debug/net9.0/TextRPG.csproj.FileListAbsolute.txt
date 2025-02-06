@@ -1,0 +1,15 @@
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\TextRPG.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\TextRPG.AssemblyInfoInputs.cache
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\TextRPG.AssemblyInfo.cs
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\TextRPG.csproj.CoreCompileInputs.cache
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\bin\Debug\net9.0\TextRPG.exe
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\bin\Debug\net9.0\TextRPG.deps.json
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\bin\Debug\net9.0\TextRPG.runtimeconfig.json
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\bin\Debug\net9.0\TextRPG.dll
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\bin\Debug\net9.0\TextRPG.pdb
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\TextRPG.dll
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\refint\TextRPG.dll
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\TextRPG.pdb
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\TextRPG.genruntimeconfig.cache
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\ref\TextRPG.dll
+C:\Users\Allhoon\source\repos\TextRPG\TextRPG\obj\Debug\net9.0\TextRPG.sourcelink.json

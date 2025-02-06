@@ -1,0 +1,21 @@
+Knight
+헨리
+2
+110
+110
+11
+11
+100
+6
+훈련용 갑옷
+False
+무쇠 갑옷
+False
+스파르타의 갑옷
+False
+낡은 검
+True
+청동 도끼
+False
+스파르타의 창
+False
